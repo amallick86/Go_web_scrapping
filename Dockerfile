@@ -1,18 +1,24 @@
 #build stage
-FROM golang:alpine AS builder
-RUN apk add --no-cache git
-WORKDIR /go/src/app
+FROM golang:1.17-alpine3.14 AS builder
+WORKDIR /app
 COPY . .
-RUN go get -d -v ./...
-RUN go build -o /go/bin/app -v ./...
+RUN go build -o main main.go
+RUN apk add curl
+RUN curl -fsSL \
+    https://raw.githubusercontent.com/pressly/goose/master/install.sh |\
+    sh 
 
-#final stage
-FROM alpine:latest
-RUN apk --no-cache add ca-certificates
-COPY --from=builder /go/bin/app /app
-ENTRYPOINT /app
-LABEL Name=gowebscrapping Version=0.0.1
+#Run stage
+FROM alpine:3.14
+WORKDIR /app
+COPY --from=builder /app/main .
+COPY --from=builder /usr/local/bin/goose ./migrate
+COPY app.env .
+COPY start.sh .
+COPY wait-for.sh .
+COPY db/migration ./migration
+
+
 EXPOSE 8080
-
-#Command to run the executable
-CMD ["./main"]
+CMD [ "/app/main" ]
+ENTRYPOINT [ "/app/start.sh" ]

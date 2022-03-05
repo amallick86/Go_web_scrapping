@@ -1,20 +1,20 @@
 -- +goose Up
 -- +goose StatementBegin
 CREATE TABLE "users" (
-  "id" bigserial PRIMARY KEY,
+  "id" serial PRIMARY KEY,
   "username" varchar NOT NULL,
   "password" varchar NOT NULL,
-  "created_at" datetime NOT NULL
+  "created_at" timestamp 
 );
 -- +goose StatementEnd
 
 -- +goose StatementBegin
 CREATE TABLE "scrape" (
-  "id" bigserial PRIMARY KEY,
+  "id" serial PRIMARY KEY,
   "user_id" int NOT NULL,
   "url" varchar NOT NULL,
   "scrapped" varchar NOT NULL,
-  "created_at" datetime NOT NULL
+  "created_at" timestamp 
 );
 -- +goose StatementEnd
 
