@@ -42,6 +42,3 @@ jobs:
 
       - name: Run migrations
         run: make gooseup
-
-      - name: Test
-        run: make test
