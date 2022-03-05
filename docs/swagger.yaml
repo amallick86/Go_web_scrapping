@@ -1,0 +1,108 @@
+definitions:
+  api.Err:
+    properties:
+      error:
+        type: string
+    type: object
+  api.createAccountReq:
+    properties:
+      password:
+        minLength: 6
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  api.createAccountRes:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      username:
+        type: string
+    type: object
+  api.loginReq:
+    properties:
+      password:
+        minLength: 6
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  api.loginRes:
+    properties:
+      token:
+        type: string
+      user:
+        $ref: '#/definitions/api.createAccountRes'
+    type: object
+info:
+  contact: {}
+paths:
+  /login:
+    post:
+      consumes:
+      - application/json
+      operationId: Login
+      parameters:
+      - description: Login request
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/api.loginReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.loginRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.Err'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/api.Err'
+      summary: login
+      tags:
+      - User
+  /users:
+    post:
+      consumes:
+      - application/json
+      operationId: CreateUser
+      parameters:
+      - description: create user
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/api.createAccountReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/api.createAccountRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.Err'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/api.Err'
+      summary: add a new user
+      tags:
+      - User
+swagger: "2.0"

@@ -2,9 +2,9 @@
 -- +goose StatementBegin
 CREATE TABLE "users" (
   "id" serial PRIMARY KEY,
-  "username" varchar NOT NULL,
+  "username" varchar NOT NULL UNIQUE,
   "password" varchar NOT NULL,
-  "created_at" timestamp 
+  "created_at" Date NOT NULL DEFAULT now()
 );
 -- +goose StatementEnd
 
@@ -14,7 +14,7 @@ CREATE TABLE "scrape" (
   "user_id" int NOT NULL,
   "url" varchar NOT NULL,
   "scrapped" varchar NOT NULL,
-  "created_at" timestamp 
+  "created_at" Date NOT NULL DEFAULT now()
 );
 -- +goose StatementEnd
 
