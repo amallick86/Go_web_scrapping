@@ -33,4 +33,7 @@ coumposeup:
 coumposedown:
 		sudo docker-compose down
 
+swagger: 
+		swag init
+
 .PHONY:gooseup  goosedown sqlc dockerImage dockerbuild

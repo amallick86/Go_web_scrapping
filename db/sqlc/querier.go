@@ -7,7 +7,15 @@ import (
 )
 
 type Querier interface {
+	CountOwnScrape(ctx context.Context, userID int32) (int64, error)
+	CountScrape(ctx context.Context) (int64, error)
+	CreateScrape(ctx context.Context, arg CreateScrapeParams) (Scrape, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
+	Filter(ctx context.Context, arg FilterParams) ([]Scrape, error)
+	GetOwnScrape(ctx context.Context, arg GetOwnScrapeParams) ([]Scrape, error)
+	GetScrape(ctx context.Context, id int32) ([]Scrape, error)
+	GetUser(ctx context.Context, username string) (User, error)
+	Search(ctx context.Context, url string) ([]Scrape, error)
 }
 
 var _ Querier = (*Queries)(nil)

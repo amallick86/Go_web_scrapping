@@ -2,19 +2,21 @@
 
 package db
 
-import ()
+import (
+	"time"
+)
 
 type Scrape struct {
-	ID        int64       `json:"id"`
-	UserID    int32       `json:"userID"`
-	Url       string      `json:"url"`
-	Scrapped  string      `json:"scrapped"`
-	CreatedAt interface{} `json:"createdAt"`
+	ID        int32     `json:"id"`
+	UserID    int32     `json:"userID"`
+	Url       string    `json:"url"`
+	Scrapped  string    `json:"scrapped"`
+	CreatedAt time.Time `json:"createdAt"`
 }
 
 type User struct {
-	ID        int64       `json:"id"`
-	Username  string      `json:"username"`
-	Password  string      `json:"password"`
-	CreatedAt interface{} `json:"createdAt"`
+	ID        int32     `json:"id"`
+	Username  string    `json:"username"`
+	Password  string    `json:"password"`
+	CreatedAt time.Time `json:"createdAt"`
 }
