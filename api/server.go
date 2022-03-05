@@ -32,6 +32,7 @@ func NewServer(config util.Config, store db.Store) (*Server, error) {
 }
 
 func (server *Server) setupRouter() {
+	gin.SetMode(gin.ReleaseMode)
 	router := gin.Default()
 
 	server.router = router

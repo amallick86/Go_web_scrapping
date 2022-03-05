@@ -6,9 +6,12 @@ import (
 	"Go_web_scrapping/util"
 	"database/sql"
 	"log"
+
+	_ "github.com/lib/pq"
 )
 
 func main() {
+
 	config, err := util.LoadConfig(".")
 	if err != nil {
 		log.Fatal("cannot load  config:", err)
