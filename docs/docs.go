@@ -69,7 +69,7 @@ var doc = `{
                 }
             }
         },
-        "/list/{page}": {
+        "/list{page}": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -82,6 +82,15 @@ var doc = `{
                 ],
                 "summary": "get Scraped data of all users",
                 "operationId": "getScraped",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "page",
+                        "name": "page",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -217,8 +226,17 @@ var doc = `{
                 "tags": [
                     "Scrape"
                 ],
-                "summary": "get Scraped data of all users",
+                "summary": "get Scraped data of  own",
                 "operationId": "getownScraped",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "page",
+                        "name": "page",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -241,7 +259,7 @@ var doc = `{
                 }
             }
         },
-        "/search/{q}": {
+        "/search{q}": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -254,6 +272,15 @@ var doc = `{
                 ],
                 "summary": "you can search by url",
                 "operationId": "Search",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "search query",
+                        "name": "q",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -477,6 +504,13 @@ var doc = `{
                 }
             }
         }
+    },
+    "securityDefinitions": {
+        "bearerAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
     }
 }`
 
@@ -491,11 +525,11 @@ type swaggerInfo struct {
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = swaggerInfo{
-	Version:     "",
-	Host:        "",
-	BasePath:    "",
-	Schemes:     []string{},
-	Title:       "",
+	Version:     "1.0",
+	Host:        "localhost:8080",
+	BasePath:    "/",
+	Schemes:     []string{"http", "https"},
+	Title:       "Go web scrapping API",
 	Description: "",
 }
 

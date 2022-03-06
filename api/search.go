@@ -29,17 +29,23 @@ func newSearchList(scraped []db.SearchRow) []getScrapedListRes {
 // @ID Search
 // @Accept json
 // @Produce json
+// @Param        q   path      string  true  "search query"
 // @Success 200 {object} getScrapedListRes
+// @Success 204 {object} stringResponse
 // @Failure 400 {object} Err
 // @Failure 500 {object} Err
-// @Router /search/{q} [get]
+// @Router /search{q} [get]
 func (server *Server) search(ctx *gin.Context) {
 
 	var res []getScrapedListRes
-	q := ctx.Param("q")
+	q := ctx.Request.URL.Query().Get("q")
 	data, err := server.store.Search(ctx, q)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+	if len(data) == 0 {
+		ctx.JSON(http.StatusNoContent, stringResFunction("No result fount"))
 		return
 	}
 	res = newSearchList(data)

@@ -11,6 +11,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+//string Response
+type stringResponse struct {
+	Message string `json:"message"`
+}
+
+func stringResFunction(msg string) stringResponse {
+	return stringResponse{
+		Message: msg,
+	}
+}
+
 // create scrapping  request
 type createScrappingReq struct {
 	Url []string `json:"url" binding:"required"`
@@ -136,21 +147,23 @@ type getScrapedRes struct {
 // @ID getScraped
 // @Accept json
 // @Produce json
+// @Param        page   path      int  true  "page"
 // @Success 200 {object} getScrapedRes
+// @Success 204 {object} stringResponse
 // @Failure 400 {object} Err
 // @Failure 500 {object} Err
-// @Router /list/{page} [get]
+// @Router /list{page} [get]
 func (server *Server) getScrapedList(ctx *gin.Context) {
 
 	var res getScrapedRes
-	id := ctx.Param("id")
+	id := ctx.Param("page")
 	aid, err := strconv.Atoi(id)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse((err)))
 		return
 	}
 
-	data, err := server.store.GetScrape(ctx, int32((aid-1)*10))
+	data, err := server.store.GetScrape(ctx, int32((aid)*10))
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
@@ -160,13 +173,17 @@ func (server *Server) getScrapedList(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
+	if len(data) == 0 {
+		ctx.JSON(http.StatusNoContent, stringResFunction("List is Empty"))
+		return
+	}
 	res = getScrapedRes{
 		Scrape:      newGetScrapedList(data),
-		Totalpage:   mapTotalPage(count),
+		Totalpage:   mapTotalPage(10 % count),
 		CurrentPage: int32(aid),
 	}
 
-	ctx.JSON(http.StatusCreated, res)
+	ctx.JSON(http.StatusOK, res)
 }
 
 func newGetOwnScrapedList(scraped []db.GetOwnScrapeRow) []getScrapedListRes {
@@ -186,20 +203,22 @@ func newGetOwnScrapedList(scraped []db.GetOwnScrapeRow) []getScrapedListRes {
 }
 
 // getOwnScrapedList handles request for fetch own Scraped List
-// @Summary get Scraped data of all users
+// @Summary get Scraped data of  own
 // @Tags Scrape
 // @ID getownScraped
 // @Accept json
 // @Produce json
+// @Param        page   path      int  true  "page"
 // @Security bearerAuth
 // @Success 200 {object} getScrapedRes
+// @Success 204 {object} stringResponse
 // @Failure 400 {object} Err
 // @Failure 500 {object} Err
 // @Router /scrape/{page} [get]
 func (server *Server) getOwnScrapedList(ctx *gin.Context) {
 
 	var res getScrapedRes
-	id := ctx.Param("id")
+	id := ctx.Param("page")
 	aid, err := strconv.Atoi(id)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse((err)))
@@ -208,11 +227,15 @@ func (server *Server) getOwnScrapedList(ctx *gin.Context) {
 	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
 	arg := db.GetOwnScrapeParams{
 		UserID: authPayload.UserId,
-		ID:     int32((aid - 1) * 10),
+		ID:     int32((aid) * 10),
 	}
 	data, err := server.store.GetOwnScrape(ctx, arg)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+	if len(data) == 0 {
+		ctx.JSON(http.StatusNoContent, stringResFunction("List is Empty"))
 		return
 	}
 	count, err := server.store.CountScrape(ctx)
@@ -222,7 +245,7 @@ func (server *Server) getOwnScrapedList(ctx *gin.Context) {
 	}
 	res = getScrapedRes{
 		Scrape:      newGetOwnScrapedList(data),
-		Totalpage:   mapTotalPage(count),
+		Totalpage:   mapTotalPage(10 % count),
 		CurrentPage: int32(aid),
 	}
 

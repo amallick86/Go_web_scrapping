@@ -10,7 +10,7 @@ import (
 
 // filter request
 type filterReq struct {
-	FromDate string `json:"from_date" binding:"required"`
+	FromDate string `json:"from_date" `
 	ToDate   string `json:"to_date" `
 }
 
@@ -38,6 +38,7 @@ func newfilterList(scraped []db.FilterRow) []getScrapedListRes {
 // @Produce json
 // @Param data body filterReq true "filter request"
 // @Success 200 {object} getScrapedListRes
+// @Success 204 {object} stringResponse
 // @Failure 400 {object} Err
 // @Failure 500 {object} Err
 // @Router /filter [post]
@@ -81,6 +82,10 @@ func (server *Server) filter(ctx *gin.Context) {
 	data, err := server.store.Filter(ctx, arg)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+	if len(data) == 0 {
+		ctx.JSON(http.StatusNoContent, stringResFunction("No result fount"))
 		return
 	}
 	res = newfilterList(data)

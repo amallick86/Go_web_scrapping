@@ -34,6 +34,7 @@ func NewServer(config util.Config, store db.Store) (*Server, error) {
 	return server, nil
 }
 
+// @Security bearerAuth
 func (server *Server) setupRouter() {
 	//mode of gin dev mode or release mode
 	gin.SetMode(gin.ReleaseMode)
@@ -44,33 +45,27 @@ func (server *Server) setupRouter() {
 	docs.SwaggerInfo.Description = "Go_web_scrapping API'S"
 	docs.SwaggerInfo.Version = "1.0"
 	docs.SwaggerInfo.Host = "localhost:8080"
-	docs.SwaggerInfo.BasePath = "/api/v1"
-	docs.SwaggerInfo.Schemes = []string{"http"}
-
-	//server route
-	server.router = router
+	//docs.SwaggerInfo.BasePath = "/api/v1"
+	docs.SwaggerInfo.Schemes = []string{"http", "https"}
 
 	//cors middleware
 	router.Use(cors.Default())
 
-	v1 := router.Group("/api/v1")
+	router.POST("/users", server.createUser)
+	router.POST("/login", server.login)
+	router.GET("/list/:page", server.getScrapedList)
+	router.GET("/search", server.search)
+	router.POST("/filter", server.filter)
+
+	scrape := router.Group("/scrape").Use(authMiddleware(server.tokenMaker))
 	{
-		//swager route
-		v1.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFile.Handler))
-
-		v1.POST("/users", server.createUser)
-		v1.POST("/login", server.login)
-		v1.GET("/list:page", server.getScrapedList)
-		v1.GET("/search:q", server.search)
-		v1.POST("/filter", server.filter)
-
-		scrape := v1.Group("/scrape").Use(authMiddleware(server.tokenMaker))
-		{
-			scrape.POST("/create", server.createScrapping)
-			scrape.GET(":page", server.getOwnScrapedList)
-		}
-
+		scrape.POST("/create", server.createScrapping)
+		scrape.GET(":page", server.getOwnScrapedList)
 	}
+	//swager route
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFile.Handler))
+	//server route
+	server.router = router
 
 }
 
