@@ -1,8 +1,16 @@
 {
+    "schemes": [
+        "http",
+        "https"
+    ],
     "swagger": "2.0",
     "info": {
-        "contact": {}
+        "title": "Go web scrapping API",
+        "contact": {},
+        "version": "1.0"
     },
+    "host": "localhost:8080",
+    "basePath": "/",
     "paths": {
         "/filter": {
             "post": {
@@ -50,7 +58,7 @@
                 }
             }
         },
-        "/list/{page}": {
+        "/list{page}": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -63,6 +71,15 @@
                 ],
                 "summary": "get Scraped data of all users",
                 "operationId": "getScraped",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "page",
+                        "name": "page",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -198,8 +215,17 @@
                 "tags": [
                     "Scrape"
                 ],
-                "summary": "get Scraped data of all users",
+                "summary": "get Scraped data of  own",
                 "operationId": "getownScraped",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "page",
+                        "name": "page",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -222,7 +248,7 @@
                 }
             }
         },
-        "/search/{q}": {
+        "/search{q}": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -235,6 +261,15 @@
                 ],
                 "summary": "you can search by url",
                 "operationId": "Search",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "search query",
+                        "name": "q",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -457,6 +492,13 @@
                     "$ref": "#/definitions/api.createAccountRes"
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "bearerAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }

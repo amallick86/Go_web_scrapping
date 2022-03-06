@@ -1,3 +1,4 @@
+basePath: /
 definitions:
   api.Err:
     properties:
@@ -99,8 +100,11 @@ definitions:
       user:
         $ref: '#/definitions/api.createAccountRes'
     type: object
+host: localhost:8080
 info:
   contact: {}
+  title: Go web scrapping API
+  version: "1.0"
 paths:
   /filter:
     post:
@@ -132,11 +136,17 @@ paths:
       summary: you can filter by time
       tags:
       - Filter
-  /list/{page}:
+  /list{page}:
     get:
       consumes:
       - application/json
       operationId: getScraped
+      parameters:
+      - description: page
+        in: path
+        name: page
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -190,6 +200,12 @@ paths:
       consumes:
       - application/json
       operationId: getownScraped
+      parameters:
+      - description: page
+        in: path
+        name: page
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -207,7 +223,7 @@ paths:
             $ref: '#/definitions/api.Err'
       security:
       - bearerAuth: []
-      summary: get Scraped data of all users
+      summary: get Scraped data of  own
       tags:
       - Scrape
   /scrape/create:
@@ -242,11 +258,17 @@ paths:
       summary: Create Scrapping
       tags:
       - Scrape
-  /search/{q}:
+  /search{q}:
     get:
       consumes:
       - application/json
       operationId: Search
+      parameters:
+      - description: search query
+        in: path
+        name: q
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -295,4 +317,12 @@ paths:
       summary: add a new user
       tags:
       - User
+schemes:
+- http
+- https
+securityDefinitions:
+  bearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

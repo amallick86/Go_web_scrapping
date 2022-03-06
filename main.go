@@ -10,6 +10,17 @@ import (
 	_ "github.com/lib/pq"
 )
 
+// @title Go web scrapping API
+// @version 1.0
+// @description
+// @schemes http https
+// @host localhost:8080
+// @BasePath /
+// @securityDefinitions.apikey bearerAuth
+// @in header
+// @name Authorization
+// @query.collection.format multi
+
 func main() {
 
 	config, err := util.LoadConfig(".")
