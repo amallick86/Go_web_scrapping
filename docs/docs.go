@@ -54,6 +54,12 @@ var doc = `{
                             "$ref": "#/definitions/api.getScrapedListRes"
                         }
                     },
+                    "204": {
+                        "description": "No Content",
+                        "schema": {
+                            "$ref": "#/definitions/api.stringResponse"
+                        }
+                    },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -96,6 +102,12 @@ var doc = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/api.getScrapedRes"
+                        }
+                    },
+                    "204": {
+                        "description": "No Content",
+                        "schema": {
+                            "$ref": "#/definitions/api.stringResponse"
                         }
                     },
                     "400": {
@@ -244,6 +256,12 @@ var doc = `{
                             "$ref": "#/definitions/api.getScrapedRes"
                         }
                     },
+                    "204": {
+                        "description": "No Content",
+                        "schema": {
+                            "$ref": "#/definitions/api.stringResponse"
+                        }
+                    },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -286,6 +304,12 @@ var doc = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/api.getScrapedListRes"
+                        }
+                    },
+                    "204": {
+                        "description": "No Content",
+                        "schema": {
+                            "$ref": "#/definitions/api.stringResponse"
                         }
                     },
                     "400": {
@@ -425,9 +449,6 @@ var doc = `{
         },
         "api.filterReq": {
             "type": "object",
-            "required": [
-                "from_date"
-            ],
             "properties": {
                 "from_date": {
                     "type": "string"
@@ -501,6 +522,14 @@ var doc = `{
                 },
                 "user": {
                     "$ref": "#/definitions/api.createAccountRes"
+                }
+            }
+        },
+        "api.stringResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
                 }
             }
         }
