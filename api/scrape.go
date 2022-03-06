@@ -3,6 +3,7 @@ package api
 import (
 	db "Go_web_scrapping/db/sqlc"
 	"Go_web_scrapping/token"
+	"Go_web_scrapping/util"
 	"net/http"
 	"strconv"
 	"sync"
@@ -97,7 +98,10 @@ func (server *Server) createScrapping(ctx *gin.Context) {
 //web scrapping function
 func scrapping(url string, s chan scrap, wg *sync.WaitGroup) {
 	defer wg.Done()
-	content := url + "_its content static"
+	content, err := util.RowScraper(url)
+	if err != nil {
+		content = "Error while scrapping"
+	}
 	s <- scrap{url, content}
 
 }

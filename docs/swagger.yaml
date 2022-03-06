@@ -53,8 +53,6 @@ definitions:
         type: string
       to_date:
         type: string
-    required:
-    - from_date
     type: object
   api.getScrapedListRes:
     properties:
@@ -100,6 +98,11 @@ definitions:
       user:
         $ref: '#/definitions/api.createAccountRes'
     type: object
+  api.stringResponse:
+    properties:
+      message:
+        type: string
+    type: object
 host: localhost:8080
 info:
   contact: {}
@@ -125,6 +128,10 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/api.getScrapedListRes'
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/api.stringResponse'
         "400":
           description: Bad Request
           schema:
@@ -154,6 +161,10 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/api.getScrapedRes'
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/api.stringResponse'
         "400":
           description: Bad Request
           schema:
@@ -213,6 +224,10 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/api.getScrapedRes'
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/api.stringResponse'
         "400":
           description: Bad Request
           schema:
@@ -276,6 +291,10 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/api.getScrapedListRes'
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/api.stringResponse'
         "400":
           description: Bad Request
           schema:
