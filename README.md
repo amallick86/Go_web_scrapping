@@ -47,3 +47,4 @@ http://localhost:8080/swagger/index.html#/
 
 1. RUN command " make dcdown " OR " docker-compose down " for down your composer
 2. RUN command " make drmi " OR " docker rmi go_web_scrapping_api " for remove image from your computer
+
