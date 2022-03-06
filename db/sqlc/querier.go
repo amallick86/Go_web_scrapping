@@ -4,6 +4,7 @@ package db
 
 import (
 	"context"
+	"time"
 )
 
 type Querier interface {
@@ -11,11 +12,12 @@ type Querier interface {
 	CountScrape(ctx context.Context) (int64, error)
 	CreateScrape(ctx context.Context, arg CreateScrapeParams) (Scrape, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
-	Filter(ctx context.Context, arg FilterParams) ([]Scrape, error)
-	GetOwnScrape(ctx context.Context, arg GetOwnScrapeParams) ([]Scrape, error)
-	GetScrape(ctx context.Context, id int32) ([]Scrape, error)
+	Filter(ctx context.Context, arg FilterParams) ([]FilterRow, error)
+	GetOwnScrape(ctx context.Context, arg GetOwnScrapeParams) ([]GetOwnScrapeRow, error)
+	GetScrape(ctx context.Context, id int32) ([]GetScrapeRow, error)
 	GetUser(ctx context.Context, username string) (User, error)
-	Search(ctx context.Context, url string) ([]Scrape, error)
+	MinDate(ctx context.Context) (time.Time, error)
+	Search(ctx context.Context, url string) ([]SearchRow, error)
 }
 
 var _ Querier = (*Queries)(nil)

@@ -60,7 +60,7 @@ func (q *Queries) CreateScrape(ctx context.Context, arg CreateScrapeParams) (Scr
 }
 
 const filter = `-- name: Filter :many
-SELECT id, user_id, url, scrapped, created_at FROM scrape WHERE created_at  BETWEEN $1 AND $2
+SELECT scrape.id,scrape.url,scrape.scrapped,scrape.created_at, users.username FROM scrape INNER JOIN users ON scrape.user_id = users.id WHERE scrape.created_at  BETWEEN $1 AND $2
 `
 
 type FilterParams struct {
@@ -68,21 +68,29 @@ type FilterParams struct {
 	CreatedAt_2 time.Time `json:"createdAt2"`
 }
 
-func (q *Queries) Filter(ctx context.Context, arg FilterParams) ([]Scrape, error) {
+type FilterRow struct {
+	ID        int32     `json:"id"`
+	Url       string    `json:"url"`
+	Scrapped  string    `json:"scrapped"`
+	CreatedAt time.Time `json:"createdAt"`
+	Username  string    `json:"username"`
+}
+
+func (q *Queries) Filter(ctx context.Context, arg FilterParams) ([]FilterRow, error) {
 	rows, err := q.db.QueryContext(ctx, filter, arg.CreatedAt, arg.CreatedAt_2)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	items := []Scrape{}
+	items := []FilterRow{}
 	for rows.Next() {
-		var i Scrape
+		var i FilterRow
 		if err := rows.Scan(
 			&i.ID,
-			&i.UserID,
 			&i.Url,
 			&i.Scrapped,
 			&i.CreatedAt,
+			&i.Username,
 		); err != nil {
 			return nil, err
 		}
@@ -98,8 +106,8 @@ func (q *Queries) Filter(ctx context.Context, arg FilterParams) ([]Scrape, error
 }
 
 const getOwnScrape = `-- name: GetOwnScrape :many
-SELECT id, user_id, url, scrapped, created_at FROM scrape
-WHERE user_id = $1 AND id <= $2 LIMIT 5
+SELECT scrape.id,scrape.url,scrape.scrapped,scrape.created_at, users.username FROM scrape INNER JOIN users ON scrape.user_id = users.id
+WHERE scrape.user_id = $1 AND scrape.id <= $2 LIMIT 10
 `
 
 type GetOwnScrapeParams struct {
@@ -107,21 +115,29 @@ type GetOwnScrapeParams struct {
 	ID     int32 `json:"id"`
 }
 
-func (q *Queries) GetOwnScrape(ctx context.Context, arg GetOwnScrapeParams) ([]Scrape, error) {
+type GetOwnScrapeRow struct {
+	ID        int32     `json:"id"`
+	Url       string    `json:"url"`
+	Scrapped  string    `json:"scrapped"`
+	CreatedAt time.Time `json:"createdAt"`
+	Username  string    `json:"username"`
+}
+
+func (q *Queries) GetOwnScrape(ctx context.Context, arg GetOwnScrapeParams) ([]GetOwnScrapeRow, error) {
 	rows, err := q.db.QueryContext(ctx, getOwnScrape, arg.UserID, arg.ID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	items := []Scrape{}
+	items := []GetOwnScrapeRow{}
 	for rows.Next() {
-		var i Scrape
+		var i GetOwnScrapeRow
 		if err := rows.Scan(
 			&i.ID,
-			&i.UserID,
 			&i.Url,
 			&i.Scrapped,
 			&i.CreatedAt,
+			&i.Username,
 		); err != nil {
 			return nil, err
 		}
@@ -137,25 +153,33 @@ func (q *Queries) GetOwnScrape(ctx context.Context, arg GetOwnScrapeParams) ([]S
 }
 
 const getScrape = `-- name: GetScrape :many
-SELECT id, user_id, url, scrapped, created_at FROM scrape
-WHERE  id <= $1 LIMIT 5
+SELECT scrape.id,scrape.url,scrape.scrapped,scrape.created_at, users.username  FROM scrape INNER JOIN users ON scrape.user_id = users.id
+WHERE  scrape.id <= $1 LIMIT 10
 `
 
-func (q *Queries) GetScrape(ctx context.Context, id int32) ([]Scrape, error) {
+type GetScrapeRow struct {
+	ID        int32     `json:"id"`
+	Url       string    `json:"url"`
+	Scrapped  string    `json:"scrapped"`
+	CreatedAt time.Time `json:"createdAt"`
+	Username  string    `json:"username"`
+}
+
+func (q *Queries) GetScrape(ctx context.Context, id int32) ([]GetScrapeRow, error) {
 	rows, err := q.db.QueryContext(ctx, getScrape, id)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	items := []Scrape{}
+	items := []GetScrapeRow{}
 	for rows.Next() {
-		var i Scrape
+		var i GetScrapeRow
 		if err := rows.Scan(
 			&i.ID,
-			&i.UserID,
 			&i.Url,
 			&i.Scrapped,
 			&i.CreatedAt,
+			&i.Username,
 		); err != nil {
 			return nil, err
 		}
@@ -170,25 +194,44 @@ func (q *Queries) GetScrape(ctx context.Context, id int32) ([]Scrape, error) {
 	return items, nil
 }
 
-const search = `-- name: Search :many
-SELECT id, user_id, url, scrapped, created_at FROM scrape WHERE url @@ $1
+const minDate = `-- name: MinDate :one
+SELECT created_at FROM scrape WHERE created_at=( SELECT MIN(created_at) FROM scrape )
 `
 
-func (q *Queries) Search(ctx context.Context, url string) ([]Scrape, error) {
+func (q *Queries) MinDate(ctx context.Context) (time.Time, error) {
+	row := q.db.QueryRowContext(ctx, minDate)
+	var created_at time.Time
+	err := row.Scan(&created_at)
+	return created_at, err
+}
+
+const search = `-- name: Search :many
+SELECT scrape.id,scrape.url,scrape.scrapped,scrape.created_at, users.username FROM scrape INNER JOIN users ON scrape.user_id = users.id WHERE url @@ $1
+`
+
+type SearchRow struct {
+	ID        int32     `json:"id"`
+	Url       string    `json:"url"`
+	Scrapped  string    `json:"scrapped"`
+	CreatedAt time.Time `json:"createdAt"`
+	Username  string    `json:"username"`
+}
+
+func (q *Queries) Search(ctx context.Context, url string) ([]SearchRow, error) {
 	rows, err := q.db.QueryContext(ctx, search, url)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	items := []Scrape{}
+	items := []SearchRow{}
 	for rows.Next() {
-		var i Scrape
+		var i SearchRow
 		if err := rows.Scan(
 			&i.ID,
-			&i.UserID,
 			&i.Url,
 			&i.Scrapped,
 			&i.CreatedAt,
+			&i.Username,
 		); err != nil {
 			return nil, err
 		}

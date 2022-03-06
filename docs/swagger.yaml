@@ -24,6 +24,63 @@ definitions:
       username:
         type: string
     type: object
+  api.createScrappingReq:
+    properties:
+      url:
+        items:
+          type: string
+        type: array
+    required:
+    - url
+    type: object
+  api.createScrappingRes:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      scrapped_content:
+        type: string
+      url:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  api.filterReq:
+    properties:
+      from_date:
+        type: string
+      to_date:
+        type: string
+    required:
+    - from_date
+    type: object
+  api.getScrapedListRes:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      scrapped_content:
+        type: string
+      url:
+        type: string
+      username:
+        type: string
+    type: object
+  api.getScrapedRes:
+    properties:
+      Scraped_data:
+        items:
+          $ref: '#/definitions/api.getScrapedListRes'
+        type: array
+      current_page:
+        type: integer
+      total_page:
+        items:
+          type: integer
+        type: array
+    type: object
   api.loginReq:
     properties:
       password:
@@ -45,6 +102,59 @@ definitions:
 info:
   contact: {}
 paths:
+  /filter:
+    post:
+      consumes:
+      - application/json
+      operationId: filter
+      parameters:
+      - description: filter request
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/api.filterReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.getScrapedListRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.Err'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/api.Err'
+      summary: you can filter by time
+      tags:
+      - Filter
+  /list/{page}:
+    get:
+      consumes:
+      - application/json
+      operationId: getScraped
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.getScrapedRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.Err'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/api.Err'
+      summary: get Scraped data of all users
+      tags:
+      - Scrape
   /login:
     post:
       consumes:
@@ -75,6 +185,86 @@ paths:
       summary: login
       tags:
       - User
+  /scrape/{page}:
+    get:
+      consumes:
+      - application/json
+      operationId: getownScraped
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.getScrapedRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.Err'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/api.Err'
+      security:
+      - bearerAuth: []
+      summary: get Scraped data of all users
+      tags:
+      - Scrape
+  /scrape/create:
+    post:
+      consumes:
+      - application/json
+      operationId: CreateScrapping
+      parameters:
+      - description: create scrapping request
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/api.createScrappingReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/api.createScrappingRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.Err'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/api.Err'
+      security:
+      - bearerAuth: []
+      summary: Create Scrapping
+      tags:
+      - Scrape
+  /search/{q}:
+    get:
+      consumes:
+      - application/json
+      operationId: Search
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.getScrapedListRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.Err'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/api.Err'
+      summary: you can search by url
+      tags:
+      - Search
   /users:
     post:
       consumes:

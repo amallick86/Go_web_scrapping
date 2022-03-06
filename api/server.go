@@ -60,9 +60,14 @@ func (server *Server) setupRouter() {
 
 		v1.POST("/users", server.createUser)
 		v1.POST("/login", server.login)
+		v1.GET("/list:page", server.getScrapedList)
+		v1.GET("/search:q", server.search)
+		v1.POST("/filter", server.filter)
+
 		scrape := v1.Group("/scrape").Use(authMiddleware(server.tokenMaker))
 		{
 			scrape.POST("/create", server.createScrapping)
+			scrape.GET(":page", server.getOwnScrapedList)
 		}
 
 	}
