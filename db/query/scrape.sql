@@ -7,22 +7,25 @@ INSERT INTO scrape (
 RETURNING *;
 
 -- name: GetOwnScrape :many
-SELECT * FROM scrape
-WHERE user_id = $1 AND id <= $2 LIMIT 5;
+SELECT scrape.id,scrape.url,scrape.scrapped,scrape.created_at, users.username FROM scrape INNER JOIN users ON scrape.user_id = users.id
+WHERE scrape.user_id = $1 AND scrape.id <= $2 LIMIT 10;
 
 -- name: CountOwnScrape :one
 SELECT COUNT(*) FROM scrape
 WHERE user_id = $1;
 
 -- name: GetScrape :many
-SELECT * FROM scrape
-WHERE  id <= $1 LIMIT 5;
+SELECT scrape.id,scrape.url,scrape.scrapped,scrape.created_at, users.username  FROM scrape INNER JOIN users ON scrape.user_id = users.id
+WHERE  scrape.id <= $1 LIMIT 10;
 
 -- name: CountScrape :one
 SELECT COUNT(*) FROM scrape;
 
 -- name: Search :many
-SELECT * FROM scrape WHERE url @@ $1 ;
+SELECT scrape.id,scrape.url,scrape.scrapped,scrape.created_at, users.username FROM scrape INNER JOIN users ON scrape.user_id = users.id WHERE url @@ $1 ;
 
 -- name: Filter :many
-SELECT * FROM scrape WHERE created_at  BETWEEN $1 AND $2;
+SELECT scrape.id,scrape.url,scrape.scrapped,scrape.created_at, users.username FROM scrape INNER JOIN users ON scrape.user_id = users.id WHERE scrape.created_at  BETWEEN $1 AND $2;
+
+-- name: MinDate :one
+SELECT created_at FROM scrape WHERE created_at=( SELECT MIN(created_at) FROM scrape ) ;
