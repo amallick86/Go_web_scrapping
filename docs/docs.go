@@ -75,7 +75,7 @@ var doc = `{
                 }
             }
         },
-        "/list{page}": {
+        "/list/{page}": {
             "get": {
                 "consumes": [
                     "application/json"
