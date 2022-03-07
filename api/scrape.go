@@ -156,7 +156,7 @@ type getScrapedRes struct {
 // @Success 204 {object} stringResponse
 // @Failure 400 {object} Err
 // @Failure 500 {object} Err
-// @Router /list{page} [get]
+// @Router /list/{page} [get]
 func (server *Server) getScrapedList(ctx *gin.Context) {
 
 	var res getScrapedRes
