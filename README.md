@@ -36,12 +36,13 @@ http://localhost:8080/swagger/index.html#/
 1. install docker on your machine
 2. clone repo " git clone https://github.com/amallick86/Go_web_scrapping.git "
 3. OPEN the project in vs code
-4. RUN command " make dcup " OR " docker-compose up " on vs code teminal for up your composer and wait for it
-5. Hit http://localhost:8080/swagger/index.html#/ url in chrome for documentation
-6. You can use above documentation to test all REST API except SEARCH API
-7. IN above documentation click on " Authorize " button and paste your token that you get from login api, paste toke as " Bearer your_token "
-8. For search open your postman
-9. in url " http://localhost:8080/search?q=https://www.facebook.com " with get method
+4. For Windows ( OPEN start.sh and SELECT " LF " in end of line sequence )
+5. RUN command " make dcup " OR " docker-compose up " on vs code teminal for up your composer and wait for it
+6. Hit http://localhost:8080/swagger/index.html#/ url in chrome for documentation
+7. You can use above documentation to test all REST API except SEARCH API
+8. IN above documentation click on " Authorize " button and paste your token that you get from login api, paste toke as " Bearer your_token "
+9. For search open your postman
+10. in url " http://localhost:8080/search?q=https://www.facebook.com " with get method
 
 ## Steps to close the project
 
